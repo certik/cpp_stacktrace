@@ -297,7 +297,7 @@ struct file_match {
 static int find_matching_file(struct dl_phdr_info *info,
 		size_t size, void *data)
 {
-	struct file_match *match = data;
+	struct file_match *match = (struct file_match *)data;
 	/* This code is modeled from Gfind_proc_info-lsb.c:callback() from libunwind */
 	long n;
 	const ElfW(Phdr) *phdr;
