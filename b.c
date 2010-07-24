@@ -3,8 +3,7 @@
 #include <stdlib.h>
 
 /* Obtain a backtrace and print it to stdout. */
-void
-print_trace (void)
+void show_backtrace (void)
 {
   void *array[10];
   size_t size;
@@ -22,16 +21,19 @@ print_trace (void)
   free (strings);
 }
 
-/* A dummy function to make the backtrace more interesting. */
-void
-dummy_function (void)
+void g()
 {
-  print_trace ();
+    show_backtrace();
 }
 
-int
-main (void)
+void f()
 {
-  dummy_function ();
-  return 0;
+    g();
+}
+
+
+int main()
+{
+    f();
+    return 0;
 }
