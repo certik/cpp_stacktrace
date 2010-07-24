@@ -1,5 +1,6 @@
 gcc -g -o a -I$HOME/usr/include -L$HOME/usr/lib a.c -lunwind
-gcc -g -o b b.c -rdynamic
-gcc -g -o backtrace-symbols backtrace-symbols.c -rdynamic
+gcc -g -o b.o -c b.c -rdynamic
+gcc -g -o backtrace-symbols.o -c backtrace-symbols.c -rdynamic
+gcc -o b b.o backtrace-symbols.o -lbfd -liberty
 #gcc -o b b.c -rdynamic
 #gcc -g -o b b.c

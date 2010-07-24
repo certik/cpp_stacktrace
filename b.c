@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+char **backtrace_symbols(void *const *buffer, int size);
+
 /* Obtain a backtrace and print it to stdout. */
 void show_backtrace (void)
 {
