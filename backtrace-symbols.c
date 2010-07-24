@@ -98,10 +98,10 @@ static void slurp_symtab(bfd * abfd)
 	if ((bfd_get_file_flags(abfd) & HAS_SYMS) == 0)
 		return;
 
-	symcount = bfd_read_minisymbols(abfd, false, (PTR) & syms, &size);
+	symcount = bfd_read_minisymbols(abfd, false, (void **) syms, &size);
 	if (symcount == 0)
 		symcount = bfd_read_minisymbols(abfd, true /* dynamic */ ,
-						(PTR) & syms, &size);
+						(void **) syms, &size);
 
 	if (symcount < 0)
 		bfd_fatal(bfd_get_filename(abfd));
