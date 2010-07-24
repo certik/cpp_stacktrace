@@ -44,8 +44,8 @@
 #define true 1
 #define false 0
 
-#define _GNU_SOURCE
-#include <string.h>
+//#define _GNU_SOURCE
+//#include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <execinfo.h>
