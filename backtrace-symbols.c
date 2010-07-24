@@ -309,7 +309,7 @@ static int find_matching_file(struct dl_phdr_info *info,
 			if ((long unsigned)(match->address) >= vaddr && (long unsigned)(match->address) < vaddr + phdr->p_memsz) {
 				/* we found a match */
 				match->file = info->dlpi_name;
-				match->base = info->dlpi_addr;
+				match->base = (void*)(info->dlpi_addr);
 			}
 		}
 	}
@@ -327,7 +327,7 @@ char **backtrace_symbols(void *const *buffer, int size)
 	char **final;
 	char *f_strings;
 
-	locations = malloc(sizeof(char**) * (stack_depth+1));
+	locations = (char***)malloc(sizeof(char**) * (stack_depth+1));
 
 	bfd_init();
 	for(x=stack_depth, y=0; x>=0; x--, y++){
@@ -346,7 +346,7 @@ char **backtrace_symbols(void *const *buffer, int size)
 
 	/* allocate the array of char* we are going to return and extra space for
 	 * all of the strings */
-	final = malloc(total + (stack_depth + 1) * sizeof(char*));
+	final = (char**)malloc(total + (stack_depth + 1) * sizeof(char*));
 	/* get a pointer to the extra space */
 	f_strings = (char*)(final + stack_depth + 1);
 
