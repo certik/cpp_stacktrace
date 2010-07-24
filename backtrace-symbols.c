@@ -331,7 +331,8 @@ char **backtrace_symbols(void *const *buffer, int size)
 
 	bfd_init();
 	for(x=stack_depth, y=0; x>=0; x--, y++){
-		struct file_match match = { .address = buffer[x] };
+		struct file_match match;
+        match.address = buffer[x];
 		char **ret_buf;
 		bfd_vma addr;
 		dl_iterate_phdr(find_matching_file, &match);
