@@ -1,0 +1,1 @@
+gcc -g -I$HOME/usr/include -L$HOME/usr/lib a.c -lunwind
