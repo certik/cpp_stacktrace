@@ -199,7 +199,7 @@ static char** translate_addresses_buf(bfd * abfd, bfd_vma *addr, int naddr)
 	/* iterate over the formating twice.
 	 * the first time we count how much space we need
 	 * the second time we do the actual printing */
-	for (state=Count; state<=Print; state++) {
+	for (state=Count; state<=Print; ) {
 	if (state == Print) {
 		ret_buf = malloc(total + sizeof(char*)*naddr);
 		buf = (char*)(ret_buf + naddr);
@@ -240,6 +240,9 @@ static char** translate_addresses_buf(bfd * abfd, bfd_vma *addr, int naddr)
 		naddr--;
 	}
 	naddr = naddr_orig;
+    if (state == Print)
+        break;
+    state = Print;
 	}
 	return ret_buf;
 }
