@@ -1,0 +1,4 @@
+http://stackoverflow.com/questions/105659/how-can-one-grab-a-stack-trace-in-c
+
+You need to use both "-g" (for addr2line to work) and "-rdynamic" (for
+addr2line to work and the backtrace to find out the function names)
