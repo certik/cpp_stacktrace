@@ -306,7 +306,7 @@ static int find_matching_file(struct dl_phdr_info *info,
 	for (n = info->dlpi_phnum; --n >= 0; phdr++) {
 		if (phdr->p_type == PT_LOAD) {
 			ElfW(Addr) vaddr = phdr->p_vaddr + load_base;
-			if (match->address >= vaddr && match->address < vaddr + phdr->p_memsz) {
+			if ((long unsigned)(match->address) >= vaddr && (long unsigned)(match->address) < vaddr + phdr->p_memsz) {
 				/* we found a match */
 				match->file = info->dlpi_name;
 				match->base = info->dlpi_addr;
