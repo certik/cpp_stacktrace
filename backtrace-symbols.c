@@ -201,7 +201,7 @@ static char** translate_addresses_buf(bfd * abfd, bfd_vma *addr, int naddr)
 	 * the second time we do the actual printing */
 	for (state=Count; state<=Print; ) {
 	if (state == Print) {
-		ret_buf = malloc(total + sizeof(char*)*naddr);
+		ret_buf = (char**)malloc(total + sizeof(char*)*naddr);
 		buf = (char*)(ret_buf + naddr);
 		len = total;
 	}
