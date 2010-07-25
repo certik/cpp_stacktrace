@@ -202,7 +202,7 @@ char* read_line_from_file(const char *filename, unsigned int line)
     char *text;
     while (fgets(tmp, sizeof(tmp), in) != NULL) {
         if (strlen(tmp) == sizeof(tmp)-1)
-            return "Too long lines";
+            return (char*)"Too long lines";
         n += 1;
         if (n == line) {
             fclose(in);
@@ -210,7 +210,7 @@ char* read_line_from_file(const char *filename, unsigned int line)
             return tmp;
         }
     }
-    return "Line not found";
+    return (char*)"Line not found";
 }
 
 static char** translate_addresses_buf(bfd * abfd, bfd_vma *addr, int naddr)
