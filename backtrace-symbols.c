@@ -240,7 +240,7 @@ static char** translate_addresses_buf(bfd * abfd, bfd_vma *addr, int naddr)
 				if (h != NULL)
 					filename = h + 1;
 			}*/
-			total += snprintf(buf, len, "%s:%u\t%s", filename ? filename : "??",
+			total += snprintf(buf, len, "  File \"%s\", line %u, in %s", filename ? filename : "??",
 			       line, name) + 1;
 
 		}
@@ -387,10 +387,10 @@ void show_backtrace (void)
   size = backtrace (array, 10);
   strings = backtrace_symbols (array, size);
 
-  printf ("Obtained %zd stack frames.\n", size);
+  printf ("Traceback (most recent call last):\n", size);
 
   for (i = 0; i < size; i++)
-     printf ("%s\n", strings[i]);
+     printf ("%s\n", strings[size-i-1]);
 
   free (strings);
 }
