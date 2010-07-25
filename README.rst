@@ -41,6 +41,29 @@ Here is an example of a traceback in a shared library::
       File "/home/ondrej/repos/cpp_stacktrace/backtrace-symbols.c", line 420, in show_backtrace()
           size = backtrace (array, 10);
 
+
+If you want to use it in your project, link with ``-lbfd -liberty``, compile
+with ``-g`` and apply this (or a similar patch) to your main.cpp::
+
+    --- a/benchmarks/bessel/main.cpp
+    +++ b/benchmarks/bessel/main.cpp
+    @@ -83,8 +83,11 @@ scalar essential_bc_values(int ess_bdy_marker, double x, double y)
+       return 0;
+     }
+
+    +#include "/home/ondrej/repos/cpp_stacktrace/stacktrace.cpp"
+    +
+     int main(int argc, char* argv[])
+     {
+    +    print_stack_on_segfault();
+       // Time measurement
+       TimePeriod cpu_time;
+       cpu_time.tick();
+
+
+And that's it. When it segfaults, it will print a nice stacktrace.
+
+
 Notes
 -----
 
