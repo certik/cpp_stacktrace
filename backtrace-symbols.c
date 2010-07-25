@@ -54,6 +54,8 @@
 #include <libiberty.h>
 #include <dlfcn.h>
 #include <link.h>
+
+#include <cxxabi.h>
 #if 0
 
 void (*dbfd_init)(void);
@@ -223,6 +225,13 @@ static char** translate_addresses_buf(bfd * abfd, bfd_vma *addr, int naddr)
 			name = functionname;
 			if (name == NULL || *name == '\0')
 				name = "??";
+            else {
+                int status = 0;
+                char *d = 0;
+                d = abi::__cxa_demangle(name, 0, 0, &status);
+                if (d)
+                    name = d;
+            }
             /*
 			if (filename != NULL) {
 				char *h;
