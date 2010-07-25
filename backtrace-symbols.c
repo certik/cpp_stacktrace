@@ -56,6 +56,7 @@
 #include <link.h>
 
 #include <cxxabi.h>
+#include <signal.h>
 #if 0
 
 void (*dbfd_init)(void);
@@ -426,4 +427,17 @@ void show_backtrace (void)
      printf ("%s\n", strings[size-i-1]);
 
   free (strings);
+}
+
+void _segfault_callback_print_stack(int sig_num)
+{
+    printf("\nSegfault caught. Printing stacktrace:\n\n");
+    show_backtrace();
+    printf("\nDone. Exiting the program.\n");
+    exit(-1);
+}
+
+void print_stack_on_segfault()
+{
+    signal(SIGSEGV, _segfault_callback_print_stack);
 }
