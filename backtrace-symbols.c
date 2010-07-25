@@ -197,7 +197,7 @@ char* read_line_from_file(const char *filename, unsigned int line)
 {
     FILE *in = fopen(filename, "r");
     if (in == NULL)
-        return "File not found";
+        return NULL;
     int n = 0;
     char *text;
     while (fgets(tmp, sizeof(tmp), in) != NULL) {
@@ -263,11 +263,15 @@ static char** translate_addresses_buf(bfd * abfd, bfd_vma *addr, int naddr)
 				if (h != NULL)
 					filename = h + 1;
 			}*/
-            char *line_text="";
+            char *line_text=NULL;
             if (filename)
                 line_text = read_line_from_file(filename, line);
-			total += snprintf(buf, len, "  File \"%s\", line %u, in %s\n    %s", filename ? filename : "??",
-			       line, name, line_text) + 1;
+            if (line_text)
+                total += snprintf(buf, len, "  File \"%s\", line %u, in %s\n    %s", filename ? filename : "??",
+                       line, name, line_text) + 1;
+            else
+                total += snprintf(buf, len, "  File \"%s\", line %u, in %s", filename ? filename : "??",
+                       line, name) + 1;
 
 		}
 		if (state == Print) {
