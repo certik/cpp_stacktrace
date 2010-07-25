@@ -1,3 +1,3 @@
-g++ -g -o b.o -c b.c -rdynamic
-g++ -g -o backtrace-symbols.o -c backtrace-symbols.c -rdynamic
+g++ -g -o b.o -c b.c
+g++ -g -o backtrace-symbols.o -c backtrace-symbols.c
 g++ -o b b.o backtrace-symbols.o -lbfd -liberty
