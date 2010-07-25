@@ -223,13 +223,14 @@ static char** translate_addresses_buf(bfd * abfd, bfd_vma *addr, int naddr)
 			name = functionname;
 			if (name == NULL || *name == '\0')
 				name = "??";
+            /*
 			if (filename != NULL) {
 				char *h;
 
 				h = (char *) strrchr(filename, '/');
 				if (h != NULL)
 					filename = h + 1;
-			}
+			}*/
 			total += snprintf(buf, len, "%s:%u\t%s()", filename ? filename : "??",
 			       line, name) + 1;
 
