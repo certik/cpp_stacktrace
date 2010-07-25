@@ -45,11 +45,12 @@
 #define false 0
 
 //#define _GNU_SOURCE
-//#include <string.h>
+#include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <execinfo.h>
 #include <bfd.h>
+#define HAVE_DECL_BASENAME 1
 #include <libiberty.h>
 #include <dlfcn.h>
 #include <link.h>
