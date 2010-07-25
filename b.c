@@ -1,8 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void show_backtrace (void);
-void print_stack_on_segfault();
+#include "stacktrace.h"
 
 void g()
 {

@@ -1,3 +1,3 @@
 g++ -g -o b.o -c b.c
-g++ -g -o backtrace-symbols.o -c backtrace-symbols.c
-g++ -o b b.o backtrace-symbols.o -lbfd -liberty
+g++ -g -o stacktrace.o -c stacktrace.cpp
+g++ -o b b.o stacktrace.o -lbfd -liberty
