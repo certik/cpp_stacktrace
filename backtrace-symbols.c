@@ -119,6 +119,9 @@ static const char *functionname;
 static unsigned int line;
 static int found;
 
+// For reading lines:
+char tmp[1000];
+
 /* Look for an address in a section.  This is called via
    bfd_map_over_sections.  */
 
@@ -190,6 +193,26 @@ static void translate_addresses(bfd * abfd, char (*addr)[PTRSTR_LEN], int naddr)
 }
 #endif
 
+char* read_line_from_file(const char *filename, unsigned int line)
+{
+    FILE *in = fopen(filename, "r");
+    if (in == NULL)
+        return "File not found";
+    int n = 0;
+    char *text;
+    while (fgets(tmp, sizeof(tmp), in) != NULL) {
+        if (strlen(tmp) == sizeof(tmp)-1)
+            return "Too long lines";
+        n += 1;
+        if (n == line) {
+            fclose(in);
+            tmp[strlen(tmp)-1] = 0;
+            return tmp;
+        }
+    }
+    return "Line not found";
+}
+
 static char** translate_addresses_buf(bfd * abfd, bfd_vma *addr, int naddr)
 {
 	int naddr_orig = naddr;
@@ -240,8 +263,11 @@ static char** translate_addresses_buf(bfd * abfd, bfd_vma *addr, int naddr)
 				if (h != NULL)
 					filename = h + 1;
 			}*/
-			total += snprintf(buf, len, "  File \"%s\", line %u, in %s", filename ? filename : "??",
-			       line, name) + 1;
+            char *line_text="";
+            if (filename)
+                line_text = read_line_from_file(filename, line);
+			total += snprintf(buf, len, "  File \"%s\", line %u, in %s\n    %s", filename ? filename : "??",
+			       line, name, line_text) + 1;
 
 		}
 		if (state == Print) {
