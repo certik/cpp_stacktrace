@@ -1,6 +1,3 @@
-g++ -g -o a -I$HOME/usr/include -L$HOME/usr/lib a.c -lunwind
 g++ -g -o b.o -c b.c -rdynamic
 g++ -g -o backtrace-symbols.o -c backtrace-symbols.c -rdynamic
 g++ -o b b.o backtrace-symbols.o -lbfd -liberty
-#gcc -o b b.c -rdynamic
-#gcc -g -o b b.c
