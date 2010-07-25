@@ -226,7 +226,7 @@ static char** translate_addresses_buf(bfd * abfd, bfd_vma *addr, int naddr)
 			if (filename != NULL) {
 				char *h;
 
-				h = strrchr(filename, '/');
+				h = (char *) strrchr(filename, '/');
 				if (h != NULL)
 					filename = h + 1;
 			}
