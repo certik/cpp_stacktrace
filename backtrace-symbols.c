@@ -144,7 +144,10 @@ static void find_address_in_section(bfd *abfd, asection *section, void *data __a
 	if (pc >= vma + size)
 		return;
 
-	found = bfd_find_nearest_line(abfd, section, syms, pc - vma,
+    // Originally there was "pc-vma", but sometimes the bfd_find_nearest_line
+    // returns the next line after the correct one. "pc-vma-1" seems to produce
+    // correct line numbers:
+	found = bfd_find_nearest_line(abfd, section, syms, pc - vma - 1,
 				      &filename, &functionname, &line);
 }
 
