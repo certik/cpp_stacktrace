@@ -69,25 +69,6 @@ static void find_address_in_section(bfd *abfd, asection *section, void *data);
 char* read_line_from_file(const char *filename, unsigned int line_number);
 static char **process_file(const char *file_name, bfd_vma *addr, int naddr);
 
-/* Read in the symbol table.  */
-
-static void slurp_symtab(bfd * abfd)
-{
-	long symcount;
-	unsigned int size;
-
-	if ((bfd_get_file_flags(abfd) & HAS_SYMS) == 0)
-		return;
-
-	symcount = bfd_read_minisymbols(abfd, false, (void **) &syms, &size);
-	if (symcount == 0)
-		symcount = bfd_read_minisymbols(abfd, true /* dynamic */ ,
-						(void **) &syms, &size);
-
-	if (symcount < 0)
-		bfd_fatal(bfd_get_filename(abfd));
-}
-
 /* These global variables are used to pass information between
    translate_addresses and find_address_in_section.  */
 
@@ -287,6 +268,26 @@ char **backtrace_symbols(void *const *buffer, int size)
 /*
 Everything below this line is MIT licensed.
 */
+
+/* Loads the symbol table into the global variable 'syms'.  */
+
+static void slurp_symtab(bfd * abfd)
+{
+	long symcount;
+	unsigned int size;
+
+	if ((bfd_get_file_flags(abfd) & HAS_SYMS) == 0)
+		return;
+
+	symcount = bfd_read_minisymbols(abfd, false, (void **) &syms, &size);
+	if (symcount == 0)
+		symcount = bfd_read_minisymbols(abfd, true /* dynamic */ ,
+						(void **) &syms, &size);
+
+	if (symcount < 0)
+        fatal("bfd_read_minisymbols() failed");
+}
+
 
 /* Process a file.  */
 
