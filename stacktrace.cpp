@@ -66,6 +66,7 @@ static asymbol **syms;		/* Symbol table.  */
 
 static void slurp_symtab(bfd * abfd);
 static void find_address_in_section(bfd *abfd, asection *section, void *data);
+char* read_line_from_file(const char *filename, unsigned int line_number);
 
 /* Read in the symbol table.  */
 
@@ -94,9 +95,6 @@ static const char *filename;
 static const char *functionname;
 static unsigned int line;
 static int found;
-
-// For reading lines:
-char tmp[1000];
 
 /* Look for an address in a section.  This is called via
    bfd_map_over_sections.  */
@@ -127,26 +125,6 @@ static void find_address_in_section(bfd *abfd, asection *section, void *data __a
 				      &filename, &functionname, &line);
 }
 
-
-char* read_line_from_file(const char *filename, unsigned int line)
-{
-    FILE *in = fopen(filename, "r");
-    if (in == NULL)
-        return NULL;
-    int n = 0;
-    char *text;
-    while (fgets(tmp, sizeof(tmp), in) != NULL) {
-        if (strlen(tmp) == sizeof(tmp)-1)
-            return (char*)"Too long lines";
-        n += 1;
-        if (n == line) {
-            fclose(in);
-            tmp[strlen(tmp)-1] = 0;
-            return tmp;
-        }
-    }
-    return (char*)"Line not found";
-}
 
 static char** translate_addresses_buf(bfd * abfd, bfd_vma *addr, int naddr)
 {
@@ -341,23 +319,58 @@ char **backtrace_symbols(void *const *buffer, int size)
 	return final;
 }
 
+/* ----------------------------------------------------- */
+
+/*
+Everything below this line is MIT licensed.
+*/
+
+/*
+   Reads the 'line_number'th line from the file filename.
+*/
+char tmp[1000];
+
+char* read_line_from_file(const char *filename, unsigned int line_number)
+{
+    FILE *in = fopen(filename, "r");
+    if (in == NULL)
+        return NULL;
+    int n = 0;
+    char *text;
+    while (fgets(tmp, sizeof(tmp), in) != NULL) {
+        if (strlen(tmp) == sizeof(tmp)-1)
+            return (char*)"Too long lines";
+        n += 1;
+        if (n == line_number) {
+            fclose(in);
+            tmp[strlen(tmp)-1] = 0;
+            return tmp;
+        }
+    }
+    return (char*)"Line not found";
+}
+
+
 /* Obtain a backtrace and print it to stdout. */
 void show_backtrace (void)
 {
-  void *array[10];
+  void *array[100];
   size_t size;
   char **strings;
   size_t i;
 
-  size = backtrace (array, 10);
-  strings = backtrace_symbols (array, size);
+  // Obtain the list of addresses
+  size = backtrace(array, 100);
+  // Convert addresses to filenames, line numbers, function names and the line
+  // text
+  strings = backtrace_symbols(array, size);
 
+  // Print it in a Python like fashion:
   printf ("Traceback (most recent call last):\n", size);
-
   for (i = 0; i < size; i++)
      printf ("%s\n", strings[size-i-1]);
 
-  free (strings);
+  free(strings);
 }
 
 void _segfault_callback_print_stack(int sig_num)
