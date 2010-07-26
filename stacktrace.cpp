@@ -78,35 +78,6 @@ static const char *functionname;
 static unsigned int line;
 static int found;
 
-/* Look for an address in a section.  This is called via
-   bfd_map_over_sections.  */
-
-static void find_address_in_section(bfd *abfd, asection *section, void *data __attribute__ ((__unused__)) )
-{
-	bfd_vma vma;
-	bfd_size_type size;
-
-	if (found)
-		return;
-
-	if ((bfd_get_section_flags(abfd, section) & SEC_ALLOC) == 0)
-		return;
-
-	vma = bfd_get_section_vma(abfd, section);
-	if (pc < vma)
-		return;
-
-	size = bfd_section_size(abfd, section);
-	if (pc >= vma + size)
-		return;
-
-    // Originally there was "pc-vma", but sometimes the bfd_find_nearest_line
-    // returns the next line after the correct one. "pc-vma-1" seems to produce
-    // correct line numbers:
-	found = bfd_find_nearest_line(abfd, section, syms, pc - vma - 1,
-				      &filename, &functionname, &line);
-}
-
 
 static char** translate_addresses_buf(bfd * abfd, bfd_vma *addr, int naddr)
 {
@@ -263,11 +234,40 @@ char **backtrace_symbols(void *const *buffer, int size)
 	return final;
 }
 
-/* ----------------------------------------------------- */
+/* -----------------------------------------------------
 
-/*
 Everything below this line is MIT licensed.
 */
+
+/* Look for an address in a section.  This is called via
+   bfd_map_over_sections.  */
+
+static void find_address_in_section(bfd *abfd, asection *section, void *data __attribute__ ((__unused__)) )
+{
+	bfd_vma vma;
+	bfd_size_type size;
+
+	if (found)
+		return;
+
+	if ((bfd_get_section_flags(abfd, section) & SEC_ALLOC) == 0)
+		return;
+
+	vma = bfd_get_section_vma(abfd, section);
+	if (pc < vma)
+		return;
+
+	size = bfd_section_size(abfd, section);
+	if (pc >= vma + size)
+		return;
+
+    // Originally there was "pc-vma", but sometimes the bfd_find_nearest_line
+    // returns the next line after the correct one. "pc-vma-1" seems to produce
+    // correct line numbers:
+	found = bfd_find_nearest_line(abfd, section, syms, pc - vma - 1,
+				      &filename, &functionname, &line);
+}
+
 
 /* Loads the symbol table into the global variable 'syms'.  */
 
