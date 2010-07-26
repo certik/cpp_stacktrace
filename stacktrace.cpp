@@ -34,7 +34,7 @@
    along with this program; if not, write to the Free Software
    Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
 
-#define fatal(a, b) exit(1)
+#define fatal(a) exit(1)
 #define bfd_fatal(a) exit(1)
 #define bfd_nonfatal(a) exit(1)
 #define list_matching_formats(a) exit(1)
@@ -67,6 +67,7 @@ static asymbol **syms;		/* Symbol table.  */
 static void slurp_symtab(bfd * abfd);
 static void find_address_in_section(bfd *abfd, asection *section, void *data);
 char* read_line_from_file(const char *filename, unsigned int line_number);
+static char **process_file(const char *file_name, bfd_vma *addr, int naddr);
 
 /* Read in the symbol table.  */
 
@@ -200,44 +201,6 @@ static char** translate_addresses_buf(bfd * abfd, bfd_vma *addr, int naddr)
 	}
 	return ret_buf;
 }
-/* Process a file.  */
-
-static char **process_file(const char *file_name, bfd_vma *addr, int naddr)
-{
-	bfd *abfd;
-	char **matching;
-	char **ret_buf;
-
-	abfd = bfd_openr(file_name, NULL);
-
-	if (abfd == NULL)
-		bfd_fatal(file_name);
-
-	if (bfd_check_format(abfd, bfd_archive))
-		fatal("%s: can not get addresses from archive", file_name);
-
-	if (!bfd_check_format_matches(abfd, bfd_object, &matching)) {
-		bfd_nonfatal(bfd_get_filename(abfd));
-		if (bfd_get_error() ==
-		    bfd_error_file_ambiguously_recognized) {
-			list_matching_formats(matching);
-			free(matching);
-		}
-		xexit(1);
-	}
-
-	slurp_symtab(abfd);
-
-	ret_buf = translate_addresses_buf(abfd, addr, naddr);
-
-	if (syms != NULL) {
-		free(syms);
-		syms = NULL;
-	}
-
-	bfd_close(abfd);
-	return ret_buf;
-}
 
 #define MAX_DEPTH 16
 
@@ -324,6 +287,39 @@ char **backtrace_symbols(void *const *buffer, int size)
 /*
 Everything below this line is MIT licensed.
 */
+
+/* Process a file.  */
+
+static char **process_file(const char *file_name, bfd_vma *addr, int naddr)
+{
+    // Initialize 'abfd' and do some sanity checks
+	bfd *abfd;
+	abfd = bfd_openr(file_name, NULL);
+	if (abfd == NULL)
+        fatal("bfd_openr() failed");
+	if (bfd_check_format(abfd, bfd_archive))
+		fatal("Cannot get addresses from archive");
+	char **matching;
+	if (!bfd_check_format_matches(abfd, bfd_object, &matching))
+        fatal("bfd_check_format_matches() failed");
+
+
+    // Read the symbols
+	slurp_symtab(abfd);
+
+    // Get nice representation of each address
+	char **ret_buf;
+	ret_buf = translate_addresses_buf(abfd, addr, naddr);
+
+    // cleanup
+	if (syms != NULL) {
+		free(syms);
+		syms = NULL;
+	}
+	bfd_close(abfd);
+	return ret_buf;
+}
+
 
 /*
    Reads the 'line_number'th line from the file filename.
