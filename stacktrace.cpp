@@ -423,7 +423,7 @@ void _segfault_callback_print_stack(int sig_num)
     printf("\nSegfault caught. Printing stacktrace:\n\n");
     show_backtrace();
     printf("\nDone. Exiting the program.\n");
-    exit(-1);
+    abort();
 }
 
 void print_stack_on_segfault()
