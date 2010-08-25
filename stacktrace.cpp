@@ -255,6 +255,41 @@ char **backtrace_symbols(void *const *buffer, int size)
 Everything below this line is MIT licensed.
 */
 
+/**
+ * Read a line from the given file pointer, stripping the traling newline.
+ * NULL is returned if an error or EOF is encountered.
+ */
+#define INIT_BUF_SIZE 64
+
+char *read_line(FILE *fp) {
+    int buf_size = INIT_BUF_SIZE;
+    char *buf = (char*)calloc(buf_size, sizeof(char)); *buf = 0;
+    int tail_size = buf_size;
+    char *tail = buf;
+
+    /* successively read portions of the line into the tail of the buffer
+     * (the empty section of the buffer following the text that has already
+     * been read) until the end of the line is encountered */
+    while(!feof(fp)) {
+        if(fgets(tail, tail_size, fp) == NULL) {
+            /* EOF or read error */
+            free(buf);
+            return NULL;
+        }
+        if(tail[strlen(tail)-1] == '\n') {
+            /* end of line reached */
+            break;
+        }
+        /* double size of buffer */
+        tail_size = buf_size + 1; /* size of new tail */
+        buf_size *= 2; /* increase size of buffer to fit new tail */
+        buf = (char*)realloc(buf, buf_size * sizeof(char));
+        tail = buf + buf_size - tail_size; /* point tail at null-terminator */
+    }
+    tail[strlen(tail)-1] = 0; /* remove trailing newline */
+    return buf;
+}
+
 /* Look for an address in a section.  This is called via
    bfd_map_over_sections.  */
 
