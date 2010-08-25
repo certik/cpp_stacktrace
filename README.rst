@@ -11,7 +11,7 @@ Usage
 
 Here is how to use it::
 
-    $ ./compile
+    $ ./compile_gcc
     $ ./b
     Traceback (most recent call last):
       File "/build/buildd/eglibc-2.10.1/csu/../sysdeps/x86_64/elf/start.S", line 113, in _start
