@@ -119,13 +119,23 @@ static char** translate_addresses_buf(bfd * abfd, bfd_vma *addr, int naddr)
 			if (name == NULL || *name == '\0')
 				name = "??";
             else {
+#ifdef __cplusplus
+                // In C++, demangle the name if it's mangled:
                 int status = 0;
                 char *d = 0;
-#ifdef __cplusplus
                 d = abi::__cxa_demangle(name, 0, 0, &status);
                 if (d)
                     name = d;
+                else
 #endif
+                // Both in C and C++, if the name is not mangled (this is
+                // always the case in C, but sometimes also in C++), append
+                // "()" at the end of the string:
+                {
+                    char *out;
+                    asprintf(&out, "%s()", name);
+                    name = out;
+                }
             }
             /*
 			if (filename != NULL) {
