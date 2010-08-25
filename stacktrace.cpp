@@ -44,7 +44,9 @@
 #define true 1
 #define false 0
 
-//#define _GNU_SOURCE
+#ifndef __cplusplus
+#define _GNU_SOURCE
+#endif
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -55,7 +57,9 @@
 #include <dlfcn.h>
 #include <link.h>
 
+#ifdef __cplusplus
 #include <cxxabi.h>
+#endif
 #include <signal.h>
 
 
@@ -117,9 +121,11 @@ static char** translate_addresses_buf(bfd * abfd, bfd_vma *addr, int naddr)
             else {
                 int status = 0;
                 char *d = 0;
+#ifdef __cplusplus
                 d = abi::__cxa_demangle(name, 0, 0, &status);
                 if (d)
                     name = d;
+#endif
             }
             /*
 			if (filename != NULL) {

@@ -1,0 +1,3 @@
+gcc -g -o b.o -c b.c
+gcc -g -x c -o stacktrace.o -c stacktrace.cpp
+gcc -o b stacktrace.o b.o -lbfd -liberty
