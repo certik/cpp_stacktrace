@@ -376,26 +376,23 @@ static char **process_file(const char *file_name, bfd_vma *addr, int naddr)
 /*
    Reads the 'line_number'th line from the file filename.
 */
-char tmp[1000];
-
 char* read_line_from_file(const char *filename, unsigned int line_number)
 {
     FILE *in = fopen(filename, "r");
     if (in == NULL)
         return NULL;
+    if (line_number == 0)
+        return (char*)"Line number must be positive";
     int n = 0;
-    char *text;
-    while (fgets(tmp, sizeof(tmp), in) != NULL) {
-        if (strlen(tmp) == sizeof(tmp)-1)
-            return (char*)"Too long lines";
+    char *line;
+    while (n < line_number) {
         n += 1;
-        if (n == line_number) {
-            fclose(in);
-            tmp[strlen(tmp)-1] = 0;
-            return tmp;
+        line = read_line(in);
+        if (line == NULL) {
+            return (char*)"Line not found";
         }
     }
-    return (char*)"Line not found";
+    return line;
 }
 
 
