@@ -11,6 +11,7 @@ Usage
 
 Here is how to use it::
 
+    $ sudo apt-get install binutils-dev
     $ ./compile_gcc
     $ ./b
     Traceback (most recent call last):
