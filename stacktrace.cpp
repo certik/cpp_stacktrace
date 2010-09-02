@@ -423,10 +423,20 @@ void _segfault_callback_print_stack(int sig_num)
     printf("\nSegfault caught. Printing stacktrace:\n\n");
     show_backtrace();
     printf("\nDone. Exiting the program.\n");
+    // Deregister our abort callback:
+    signal(SIGABRT, SIG_DFL);
     abort();
+}
+
+void _abort_callback_print_stack(int sig_num)
+{
+    printf("\nAbort caught. Printing stacktrace:\n\n");
+    show_backtrace();
+    printf("\nDone.\n");
 }
 
 void print_stack_on_segfault()
 {
     signal(SIGSEGV, _segfault_callback_print_stack);
+    signal(SIGABRT, _abort_callback_print_stack);
 }
