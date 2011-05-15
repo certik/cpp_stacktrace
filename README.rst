@@ -1,3 +1,10 @@
+**NOTE**: This repository is discontinued. It has been rewritten from scratch, BSD licensed and is developed in a new repository at:
+
+https://github.com/certik/stacktrace
+
+This repository is here for archival purposes only.
+
+
 C++ Stacktrace
 ==============
 
